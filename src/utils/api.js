@@ -1,6 +1,9 @@
 export const fetchLocationId = async (city) => {
   const response = await fetch(
-    `https://www.metaweather.com/api/location/search/?query=${city}`
+    `https://www.metaweather.com/api/location/search/?query=${city}`,
+    {
+      mode: "no-cors",
+    }
   )
   const locations = await response.json()
   return locations[0].woeid
@@ -8,7 +11,10 @@ export const fetchLocationId = async (city) => {
 
 export const fetchWeather = async (woeid) => {
   const response = await fetch(
-    `https://www.metaweather.com/api/location/${woeid}/`
+    `https://www.metaweather.com/api/location/${woeid}/`,
+    {
+      mode: "no-cors",
+    }
   )
   const { title, consolidated_weather } = await response.json()
   const { weather_state_name, the_temp } = consolidated_weather[0]
