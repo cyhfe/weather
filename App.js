@@ -1,25 +1,42 @@
+import React from "react"
 import {
-  StyleSheet,
-  Text,
   View,
-  TextInput,
   KeyboardAvoidingView,
+  Text,
+  StyleSheet,
+  Platform,
+  ImageBackground,
 } from "react-native"
-import { textSize } from "./src/utils"
 
-export default function App() {
+import { SearchInput } from "./src/components/searchInput"
+
+import { textSize } from "./src/utils/style"
+import getImageForWeather from "./src/utils/getImageForWeather"
+import { fetchLocationId } from "./src/utils/api"
+
+const App = () => {
+  const handleUpdateLocation = async (text) => {
+    const data = await fetchLocationId(text)
+    console.log(data)
+  }
   return (
-    <KeyboardAvoidingView behavior="padding" style={styles.container}>
-      <Text style={styles.largeText}>Fuzhou</Text>
-      <Text>Light Cloud</Text>
-      <Text style={styles.smallText}>34</Text>
-      <TextInput
-        autoCorrect={false}
-        placeholder="Search any city"
-        placeholderTextColor="white"
-        clearButtonMode="always"
-        style={styles.textInput}
-      />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ImageBackground
+        source={getImageForWeather("Clear")}
+        imageStyle={styles.image}
+        style={styles.imageContainer}
+        resizeMode="cover"
+      >
+        <View style={styles.contentContainer}>
+          <Text style={styles.largeText}>Shanghai</Text>
+          <Text>rain</Text>
+          <Text style={styles.smallText}>24</Text>
+          <SearchInput onSubmit={handleUpdateLocation} />
+        </View>
+      </ImageBackground>
     </KeyboardAvoidingView>
   )
 }
@@ -27,9 +44,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
   largeText: {
     fontSize: textSize.large,
@@ -37,14 +51,20 @@ const styles = StyleSheet.create({
   smallText: {
     fontSize: textSize.small,
   },
-  textInput: {
-    backgroundColor: "#666",
-    color: "white",
-    height: 40,
-    width: 300,
-    marginTop: 20,
-    marginHorizontal: 20,
-    paddingHorizontal: 10,
-    alignSelf: "center",
+  contentContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageContainer: {
+    flex: 1,
+  },
+  image: {
+    flex: 1,
+    width: null,
+    height: null,
+    resizeMode: "cover",
   },
 })
+
+export default App
