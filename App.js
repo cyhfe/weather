@@ -7,6 +7,7 @@ import {
   Platform,
   ImageBackground,
   ActivityIndicator,
+  StatusBar,
 } from "react-native"
 
 import { SearchInput } from "./src/components/searchInput"
@@ -23,9 +24,11 @@ const App = () => {
     const { location, weather, temperature } = data
     return (
       <>
-        <Text style={styles.largeText}>{location}</Text>
-        <Text>{weather}</Text>
-        <Text style={styles.smallText}>{temperature}</Text>
+        <Text style={[styles.largeText, styles.textStyle]}>{location}</Text>
+        <Text style={[styles.smallText, styles.textStyle]}>{weather}</Text>
+        <Text style={[styles.largeText, styles.textStyle]}>{`${Math.round(
+          temperature
+        )}°`}</Text>
       </>
     )
   }
@@ -45,20 +48,26 @@ const App = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <StatusBar barStyle="light-content" />
+
       <ImageBackground
         source={data ? getImageForWeather(data.weather) : null}
         imageStyle={styles.image}
         style={styles.imageContainer}
         resizeMode="cover"
       >
-        <ActivityIndicator animating={isLoading} color="white" size="large" />
-        {!isLoading && (
-          <View style={styles.contentContainer}>
-            {data && renderWeather()}
-            {error && <Text style={styles.error}>{error}</Text>}
-            <SearchInput onSubmit={setLocation} />
-          </View>
-        )}
+        <View style={styles.detailsContainer}>
+          <ActivityIndicator animating={isLoading} color="white" size="large" />
+          {!isLoading && (
+            <View style={styles.contentContainer}>
+              {data && renderWeather()}
+              {error && (
+                <Text style={[styles.error, styles.smallText]}>{error}</Text>
+              )}
+              <SearchInput onSubmit={setLocation} />
+            </View>
+          )}
+        </View>
       </ImageBackground>
     </KeyboardAvoidingView>
   )
@@ -67,6 +76,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#34495E",
   },
   largeText: {
     fontSize: textSize.large,
@@ -90,6 +100,17 @@ const styles = StyleSheet.create({
   },
   error: {
     color: "red",
+  },
+  detailsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.2)",
+    paddingHorizontal: 20,
+  },
+  textStyle: {
+    textAlign: "center",
+    fontFamily: Platform.OS === "ios" ? "AvenirNext-Regular" : "Roboto",
+    color: "white",
   },
 })
 

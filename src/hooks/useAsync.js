@@ -1,26 +1,26 @@
 import { useCallback, useLayoutEffect, useRef, useReducer } from "react"
 
 // 接受一个 dispatch（useReducer 返回值的第二个参数），返回新的 safeDispatch。
-// export function useSafeDispatch(dispatch) {
-//   const mountedRef = useRef(false)
+export function useSafeDispatch(dispatch) {
+  const mountedRef = useRef(false)
 
-//   useLayoutEffect(() => {
-//     mountedRef.current = true
-//     return () => {
-//       mountedRef.current = false
-//     }
-//   }, [])
+  useLayoutEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
-//   // 在组件卸载之后，不再调用 dispatch。
-//   const safeDispatch = useCallback(
-//     (...arg) => {
-//       mountedRef.current ? dispatch(...arg) : void 0
-//     },
-//     [dispatch]
-//   )
+  // 在组件卸载之后，不再调用 dispatch。
+  const safeDispatch = useCallback(
+    (...arg) => {
+      mountedRef.current ? dispatch(...arg) : void 0
+    },
+    [dispatch]
+  )
 
-//   return safeDispatch
-// }
+  return safeDispatch
+}
 
 // 使用useReducer管理状态
 export function reducer(state, action) {
@@ -63,6 +63,8 @@ export default function useAsync(initialState) {
     ...initialState,
   })
 
+  const safeDispatch = useSafeDispatch(dispatch)
+
   const { status, data, error } = state
 
   const isIdle = status === "idle"
@@ -73,13 +75,13 @@ export default function useAsync(initialState) {
       if (!promise || !promise.then) {
         throw new Error("run need promise as params")
       }
-      dispatch({ type: "pending" })
+      safeDispatch({ type: "pending" })
       promise.then(
-        (data) => dispatch({ type: "resolve", payload: data }),
-        (error) => dispatch({ type: "reject", payload: error })
+        (data) => safeDispatch({ type: "resolve", payload: data }),
+        (error) => safeDispatch({ type: "reject", payload: error })
       )
     },
-    [dispatch]
+    [safeDispatch]
   )
 
   return {

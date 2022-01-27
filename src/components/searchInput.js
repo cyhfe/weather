@@ -23,12 +23,16 @@ export function SearchInput({ onSubmit }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: 300,
+    width: 120,
     height: 40,
-    borderWidth: 1,
-    padding: 10,
+    marginTop: 20,
+    backgroundColor: "#eee",
+    marginHorizontal: 40,
+    paddingHorizontal: 10,
+    borderRadius: 5,
   },
   textInput: {
     flex: 1,
+    color: "black",
   },
 })
